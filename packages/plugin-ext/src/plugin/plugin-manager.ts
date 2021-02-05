@@ -30,6 +30,7 @@ import {
 } from '../common/plugin-api-rpc';
 import { PluginMetadata, PluginJsonValidationContribution } from '../common/plugin-protocol';
 import * as theia from '@theia/plugin';
+import { URI } from 'vscode-uri';
 import { join } from 'path';
 import { EnvExtImpl } from './env';
 import { PreferenceRegistryExtImpl } from './preference-registry';
@@ -312,6 +313,7 @@ export class PluginManagerExtImpl implements PluginManagerExt, PluginManager {
         }
         this.pluginContextsMap.forEach((pluginContext: theia.PluginContext, pluginId: string) => {
             pluginContext.storagePath = path ? join(path, pluginId) : undefined;
+            pluginContext.storageUri = path ? URI.parse(join(path, pluginId)) : undefined;
         });
     }
 
@@ -350,7 +352,9 @@ export class PluginManagerExtImpl implements PluginManagerExt, PluginManager {
             asAbsolutePath: asAbsolutePath,
             logPath: logPath,
             storagePath: storagePath,
+            storageUri: URI.parse(storagePath!),
             globalStoragePath: globalStoragePath,
+            globalStorageUri: URI.parse(globalStoragePath!),
             environmentVariableCollection: this.terminalService.getEnvironmentVariableCollection(plugin.model.id)
         };
         this.pluginContextsMap.set(plugin.model.id, pluginContext);
